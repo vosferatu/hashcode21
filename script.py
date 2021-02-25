@@ -65,9 +65,12 @@ for time in range(duration):
       total += streets[car_str_name]['duration']
       if total >= time:
         break
-      index += 1
-
-    car_current_street = car[index]
+      else:
+        index += 1
+    try:
+      car_current_street = car[index]
+    except IndexError:
+      car_current_street = car[index - 1]
     histogram[car_current_street][time] += 1
 
 
@@ -85,6 +88,9 @@ for intersection in missing_intersections:
   minimum = sorted_sa[0]['avg']
   sols = []
   tmp = 0
+  if minimum == 0:
+    minimum = 0.01
+
   if minimum < 1:
     tmp = 1
   else:
