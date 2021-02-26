@@ -1,5 +1,6 @@
 import math
 import sys
+import pdb
 
 filename = sys.argv[1]
 
@@ -85,11 +86,10 @@ for intersection in missing_intersections:
     street_averages.append({ 'name': street, 'avg': avg})
 
   sorted_sa = sorted(street_averages, key=lambda x: x['avg'])
-  minimum = sorted_sa[0]['avg']
+  minimum = next((i for i, x in enumerate(sorted_sa) if x['avg'] > 0), 0)
+  minimum = sorted_sa[int(minimum)]['avg']
   sols = []
   tmp = 0
-  if minimum == 0:
-    minimum = 0.01
 
   if minimum < 1:
     tmp = 1
@@ -98,8 +98,12 @@ for intersection in missing_intersections:
   
   for elem in sorted_sa:
     avg = elem['avg']
-    ratio = avg / minimum
-    seconds = math.ceil(ratio * tmp)
+    ratio = avg / tmp
+    seconds = math.floor(ratio * tmp)
+    if seconds > duration:
+      seconds = duration
+    elif seconds < 1:
+      seconds = 1
     sols.append({'duration': seconds, 'name': elem['name'] })
     
   solutions.append({
@@ -114,10 +118,6 @@ for sol in solutions:
   file.write(str(len(sol['streets']))+'\n')
   for s in sol['streets']:
     file.write(s['name'] + ' ' + str(s['duration'])+'\n')
-  
-
-
-
   
 
 
